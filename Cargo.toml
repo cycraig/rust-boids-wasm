@@ -1,0 +1,31 @@
+[package]
+name = "boids"
+version = "0.1.0"
+authors = ["Craig Bester <cycraig33@gmail.com>"]
+edition = "2018"
+
+[features]
+default = ["wee_alloc", "console_error_panic_hook"]
+
+[dev-features]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "^0.2.62"
+cfg-if = "*"
+console_error_panic_hook = {version = "*", optional = true}
+wee_alloc = {version = "^0.4.5", optional = true}
+
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.12" # NOTE: keep in sync with wasm-bindgen version
+assert_approx_eq = "*"
+
+
+[profile.release]  # Attempts to minimize file size
+lto = true
+opt-level = 'z'
+codegen-units = 1
+panic = 'abort'
