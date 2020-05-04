@@ -7,8 +7,6 @@ edition = "2018"
 [features]
 default = ["wee_alloc", "console_error_panic_hook"]
 
-[dev-features]
-
 [lib]
 crate-type = ["cdylib"]
 

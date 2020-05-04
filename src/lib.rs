@@ -19,7 +19,7 @@ const SEPARATION_FORCE: f32 = 2.0;
 
 // Obstacle forces.
 const ATTRACTION_FORCE: f32 = 0.12;
-const AVOIDANCE_FORCE: f32 = 5.0;
+const AVOIDANCE_FORCE: f32 = 7.5;
 
 // Limits.
 const MAX_SPEED: f32 = 3.;
