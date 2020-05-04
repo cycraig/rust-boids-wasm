@@ -21,6 +21,9 @@ const main = async () => {
       velocities[i] = 2*Math.random()-1;
       velocities[i+1] = 2*Math.random()-1;
     }
+    
+    let fadeInFrame = 0;
+    const maxFadeInFrames = 150;
 
     const renderLoop = () => {
       flock.set_width(canvas.width)
@@ -34,6 +37,12 @@ const main = async () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'grey';
       ctx.strokeStyle = 'grey';
+      
+      // Fade in the boids to hide the delayed load
+      if(fadeInFrame <= maxFadeInFrames) {
+          ctx.globalAlpha = fadeInFrame/maxFadeInFrames;
+          fadeInFrame += 1;
+      }
       
       for (let i = 0; i < count; i += 2) {
         const halfWidth = 2;
