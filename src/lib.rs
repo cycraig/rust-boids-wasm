@@ -203,8 +203,8 @@ impl BoidFlock {
             .fold((0f32, 0f32), |steer: (f32, f32), &oidx| {
                 add(
                     steer.0,
-                    self.velocities[2 * oidx],
                     steer.1,
+                    self.velocities[2 * oidx],
                     self.velocities[2 * oidx + 1],
                 )
             });
