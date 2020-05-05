@@ -83,6 +83,14 @@ impl BoidFlock {
         self.velocities.as_ptr()
     }
 
+    pub fn positions_mut(&mut self) -> *mut f32 {
+        self.positions.as_mut_ptr()
+    }
+
+    pub fn velocities_mut(&mut self) -> *mut f32 {
+        self.velocities.as_mut_ptr()
+    }
+
     pub fn update(&mut self) {
         (0..self.count).for_each(|i| self.flock(i));
         (0..self.count).for_each(|i| self.update_boid(i));
@@ -91,22 +99,24 @@ impl BoidFlock {
     fn flock(&mut self, idx: usize) {
         // TODO: look into SIMD instructions in wasm to speed up everything?
         let neighbours = self.get_neighbours(idx);
-        let alignment = mul_scalar(self.align(idx, &neighbours), ALIGN_FORCE);
-        let cohesion = mul_scalar(self.cohede(idx, &neighbours), COHESION_FORCE);
-        let separation = mul_scalar(self.separate(idx, &neighbours), SEPARATION_FORCE);
+        let alignment = mul_scalar(&self.align(idx, &neighbours), ALIGN_FORCE);
+        let cohesion = mul_scalar(&self.cohede(idx, &neighbours), COHESION_FORCE);
+        let separation = mul_scalar(&self.separate(idx, &neighbours), SEPARATION_FORCE);
         let attraction = mul_scalar(
-            self.attract(idx, self.width as f32 / 2., self.height as f32 / 2.),
+            &self.attract(idx, self.width as f32 / 2., self.height as f32 / 2.),
             ATTRACTION_FORCE,
         );
         let avoidance = mul_scalar(
-            self.avoid_walls(idx, self.width, self.height),
+            &self.avoid_walls(idx, self.width, self.height),
             AVOIDANCE_FORCE,
         );
 
-        let acceleration = add2(
-            add2(add2(add2(alignment, cohesion), separation), attraction),
-            avoidance,
-        );
+        let mut acceleration = (0f32, 0f32);
+        add2_mut(&mut acceleration, &alignment);
+        add2_mut(&mut acceleration, &cohesion);
+        add2_mut(&mut acceleration, &separation);
+        add2_mut(&mut acceleration, &attraction);
+        add2_mut(&mut acceleration, &avoidance);
 
         self.accelerations[2 * idx] = acceleration.0;
         self.accelerations[2 * idx + 1] = acceleration.1;
@@ -144,7 +154,7 @@ impl BoidFlock {
     fn get_neighbours(&self, idx: usize) -> Vec<usize> {
         // Slow loop through all the boids to find neighbours.
         // TODO: segment the map or use a quad tree structure to speed this up.
-        // TODO: use a static boolean array or bitmap to avoid Vec creations and destructions for neighbours
+        // Reusing a shared boolean Vec for each boid is slower.
         let mut neighbours = Vec::new();
         for i in 0..self.count {
             if i != idx {
@@ -282,10 +292,10 @@ impl BoidFlock {
         let mut steer = (0f32, 0f32);
 
         // Avoid walls.
-        steer = add2(steer, self.steer_away(x, y, 0., y));
-        steer = add2(steer, self.steer_away(x, y, width as f32, y));
-        steer = add2(steer, self.steer_away(x, y, x, 0.));
-        steer = add2(steer, self.steer_away(x, y, x, height as f32));
+        add2_mut(&mut steer, &self.steer_away(x, y, 0., y));
+        add2_mut(&mut steer, &self.steer_away(x, y, width as f32, y));
+        add2_mut(&mut steer, &self.steer_away(x, y, x, 0.));
+        add2_mut(&mut steer, &self.steer_away(x, y, x, height as f32));
 
         // Avoid corners.
         // steer = add2(steer, self.steer_away(x, y, 0., 0.));

@@ -6,11 +6,12 @@ pub fn add(ax: f32, ay: f32, bx: f32, by: f32) -> (f32, f32) {
     (ax + bx, ay + by)
 }
 
-pub fn add2((ax, ay): (f32, f32), (bx, by): (f32, f32)) -> (f32, f32) {
-    add(ax, ay, bx, by)
+pub fn add2_mut((ax, ay): &mut (f32, f32), (bx, by): &(f32, f32)) {
+    *ax += bx;
+    *ay += by;
 }
 
-pub fn mul_scalar((x, y): (f32, f32), scalar: f32) -> (f32, f32) {
+pub fn mul_scalar((x, y): &(f32, f32), scalar: f32) -> (f32, f32) {
     (scalar * x, scalar * y)
 }
 
@@ -79,20 +80,24 @@ mod tests {
 
     #[test]
     fn test_add2() {
-        assert_eq!(add2((0., 0.), (0., 0.)), (0., 0.));
-        assert_eq!(add2((0., 2.), (1., 0.)), (1., 2.));
-        assert_eq!(add2((1., 0.), (0., 2.)), (1., 2.));
-        assert_eq!(add2((-1., 2.), (1., -2.)), (0., 0.));
-        assert_eq!(add2((1., 123.), (9., 877.)), (10., 1000.));
+        let add2_fn = |mut a:(f32, f32), b:(f32,f32)| -> (f32, f32) {
+            add2_mut(&mut a, &b);
+            a
+        };
+        assert_eq!(add2_fn((0.,0.),(0.,0.)), (0., 0.));
+        assert_eq!(add2_fn((0., 2.), (1., 0.)), (1., 2.));
+        assert_eq!(add2_fn((1., 0.), (0., 2.)), (1., 2.));
+        assert_eq!(add2_fn((-1., 2.), (1., -2.)), (0., 0.));
+        assert_eq!(add2_fn((1., 123.), (9., 877.)), (10., 1000.));
     }
 
     #[test]
     fn test_mul_scalar() {
-        assert_eq!(mul_scalar((0., 0.), 3.), (0., 0.));
-        assert_eq!(mul_scalar((1., 2.), 0.), (0., 0.));
-        assert_eq!(mul_scalar((1., 2.), 1.), (1., 2.));
-        assert_eq!(mul_scalar((1., 2.), 5.), (5., 10.));
-        assert_eq!(mul_scalar((1., 2.), -5.), (-5., -10.));
+        assert_eq!(mul_scalar(&(0., 0.), 3.), (0., 0.));
+        assert_eq!(mul_scalar(&(1., 2.), 0.), (0., 0.));
+        assert_eq!(mul_scalar(&(1., 2.), 1.), (1., 2.));
+        assert_eq!(mul_scalar(&(1., 2.), 5.), (5., 10.));
+        assert_eq!(mul_scalar(&(1., 2.), -5.), (-5., -10.));
     }
 
     #[test]
