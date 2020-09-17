@@ -18,8 +18,9 @@ const COHESION_FORCE: f32 = 0.05;
 const SEPARATION_FORCE: f32 = 2.0;
 
 // Obstacle forces.
-const ATTRACTION_FORCE: f32 = 0.12;
+const ATTRACTION_FORCE: f32 = 0.05;
 const AVOIDANCE_FORCE: f32 = 7.5;
+const REPULSION_FORCE: f32 = 8.;
 
 // Limits.
 const MAX_SPEED: f32 = 3.;
@@ -39,6 +40,8 @@ pub struct BoidFlock {
     accelerations: Vec<f32>,
     width: usize,
     height: usize,
+    attractor: Option<(f32, f32)>,
+    repulsor: Option<(f32, f32)>,
 }
 
 #[wasm_bindgen]
@@ -60,6 +63,8 @@ impl BoidFlock {
             accelerations,
             width,
             height,
+            attractor: None,
+            repulsor: None,
         }
     }
 
@@ -96,20 +101,51 @@ impl BoidFlock {
         (0..self.count).for_each(|i| self.update_boid(i));
     }
 
+    fn get_attractor(&self) -> Option<(f32, f32)> {
+        if self.attractor.is_some() {
+            self.attractor
+        } else {
+            Some((self.width as f32 / 2., self.height as f32 / 2.))
+        }
+    }
+
+    pub fn set_attractor(&mut self, a_x: f32, a_y: f32) {
+        self.attractor = Some((a_x, a_y));
+    }
+
+    pub fn unset_attractor(&mut self) {
+        self.attractor = None;
+    }
+
+    fn get_repulsor(&self) -> Option<(f32, f32)> {
+        self.repulsor
+    }
+
+    pub fn set_repulsor(&mut self, r_x: f32, r_y: f32) {
+        self.repulsor = Some((r_x, r_y));
+    }
+
+    pub fn unset_repulsor(&mut self) {
+        self.repulsor = None;
+    }
+
     fn flock(&mut self, idx: usize) {
         // TODO: look into SIMD instructions in wasm to speed up everything?
         let neighbours = self.get_neighbours(idx);
         let alignment = mul_scalar(&self.align(idx, &neighbours), ALIGN_FORCE);
         let cohesion = mul_scalar(&self.cohede(idx, &neighbours), COHESION_FORCE);
         let separation = mul_scalar(&self.separate(idx, &neighbours), SEPARATION_FORCE);
-        let attraction = mul_scalar(
-            &self.attract(idx, self.width as f32 / 2., self.height as f32 / 2.),
-            ATTRACTION_FORCE,
-        );
-        let avoidance = mul_scalar(
-            &self.avoid_walls(idx, self.width, self.height),
-            AVOIDANCE_FORCE,
-        );
+        let attraction = if let Some((a_x, a_y)) = self.get_attractor() {
+            mul_scalar(&self.attract(idx, a_x, a_y), ATTRACTION_FORCE)
+        } else {
+            (0., 0.)
+        };
+        let repulsion = if let Some((r_x, r_y)) = self.get_repulsor() {
+            mul_scalar(&self.repel(idx, r_x, r_y), REPULSION_FORCE)
+        } else {
+            (0., 0.)
+        };
+        let avoidance = mul_scalar(&self.avoid_walls(idx, self.width, self.height),AVOIDANCE_FORCE);
 
         let mut acceleration = (0f32, 0f32);
         add2_mut(&mut acceleration, &alignment);
@@ -117,6 +153,7 @@ impl BoidFlock {
         add2_mut(&mut acceleration, &separation);
         add2_mut(&mut acceleration, &attraction);
         add2_mut(&mut acceleration, &avoidance);
+        add2_mut(&mut acceleration, &repulsion);
 
         self.accelerations[2 * idx] = acceleration.0;
         self.accelerations[2 * idx + 1] = acceleration.1;
@@ -283,6 +320,12 @@ impl BoidFlock {
         } else {
             return (0., 0.);
         }
+    }
+
+    fn repel(&self, idx: usize, r_x: f32, r_y: f32) -> (f32, f32) {
+        let x = self.positions[2 * idx];
+        let y = self.positions[2 * idx + 1];
+        self.steer_away(x, y, r_x, r_y)
     }
 
     fn avoid_walls(&self, idx: usize, width: usize, height: usize) -> (f32, f32) {

@@ -23,7 +23,23 @@ const main = async () => {
     }
     
     let fadeInFrame = 0;
-    const maxFadeInFrames = 150;
+    const maxFadeInFrames = 300;
+
+    // Repel boids with the mouse cursor
+    canvas.addEventListener("mousemove", event => {
+      const boundingRect = canvas.getBoundingClientRect();
+
+      const scaleX = canvas.width / boundingRect.width;
+      const scaleY = canvas.height / boundingRect.height;
+
+      const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
+      const canvasTop = (event.clientY - boundingRect.top) * scaleY;
+
+      flock.set_repulsor(canvasLeft, canvasTop);
+    });
+    canvas.addEventListener("mouseleave", event => {
+      flock.unset_repulsor();
+    });
 
     const renderLoop = () => {
       flock.set_width(canvas.width)
