@@ -166,9 +166,47 @@ export class BoidFlock {
         return ret;
     }
     /**
+    * @returns {number}
+    */
+    positions_mut() {
+        var ret = wasm.boidflock_positions_mut(this.ptr);
+        return ret;
+    }
+    /**
+    * @returns {number}
+    */
+    velocities_mut() {
+        var ret = wasm.boidflock_velocities_mut(this.ptr);
+        return ret;
+    }
+    /**
     */
     update() {
         wasm.boidflock_update(this.ptr);
+    }
+    /**
+    * @param {number} a_x
+    * @param {number} a_y
+    */
+    set_attractor(a_x, a_y) {
+        wasm.boidflock_set_attractor(this.ptr, a_x, a_y);
+    }
+    /**
+    */
+    unset_attractor() {
+        wasm.boidflock_unset_attractor(this.ptr);
+    }
+    /**
+    * @param {number} r_x
+    * @param {number} r_y
+    */
+    set_repulsor(r_x, r_y) {
+        wasm.boidflock_set_repulsor(this.ptr, r_x, r_y);
+    }
+    /**
+    */
+    unset_repulsor() {
+        wasm.boidflock_unset_repulsor(this.ptr);
     }
 }
 

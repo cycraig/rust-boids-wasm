@@ -3,6 +3,7 @@ name = "boids"
 version = "0.1.0"
 authors = ["Craig Bester <cycraig33@gmail.com>"]
 edition = "2018"
+publsih = false
 
 [features]
 default = ["wee_alloc", "console_error_panic_hook"]
