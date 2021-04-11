@@ -1,6 +1,6 @@
-// Yes, I wrote basic vector2 operations to avoid dependencies bloating the wasm target...
-use std::f32;
-use std::f32::consts::PI;
+// Basic vector2 operations to avoid dependencies bloating the wasm target...
+use core::f32;
+use core::f32::consts::PI;
 
 pub fn add(ax: f32, ay: f32, bx: f32, by: f32) -> (f32, f32) {
     (ax + bx, ay + by)
@@ -80,11 +80,11 @@ mod tests {
 
     #[test]
     fn test_add2() {
-        let add2_fn = |mut a:(f32, f32), b:(f32,f32)| -> (f32, f32) {
+        let add2_fn = |mut a: (f32, f32), b: (f32, f32)| -> (f32, f32) {
             add2_mut(&mut a, &b);
             a
         };
-        assert_eq!(add2_fn((0.,0.),(0.,0.)), (0., 0.));
+        assert_eq!(add2_fn((0., 0.), (0., 0.)), (0., 0.));
         assert_eq!(add2_fn((0., 2.), (1., 0.)), (1., 2.));
         assert_eq!(add2_fn((1., 0.), (0., 2.)), (1., 2.));
         assert_eq!(add2_fn((-1., 2.), (1., -2.)), (0., 0.));
