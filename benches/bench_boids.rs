@@ -12,8 +12,8 @@ fn init_boid_flock(n : isize) -> BoidFlock {
     let positions = flock.positions_mut();
     unsafe {
         for i in 0..n {
-            *positions.offset(2*i) = rng.gen_range(0, width) as f32;
-            *positions.offset(2*i+1) = rng.gen_range(0, height) as f32;
+            *positions.offset(2*i) = rng.gen_range(0..width) as f32;
+            *positions.offset(2*i+1) = rng.gen_range(0..height) as f32;
         }
     }
     flock

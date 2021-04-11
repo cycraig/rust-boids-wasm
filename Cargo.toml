@@ -1,9 +1,9 @@
 [package]
 name = "boids"
 version = "0.1.0"
-authors = ["Craig Bester <cycraig33@gmail.com>"]
+authors = ["Craig Bester <me@craigbester.ml>"]
 edition = "2018"
-publsih = false
+publish = false
 
 [features]
 default = ["wee_alloc", "console_error_panic_hook"]
@@ -14,16 +14,15 @@ crate-type = ["cdylib", "rlib"]
 # crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = "^0.2.62"
-cfg-if = "*"
+wasm-bindgen = {version = "0.2.73", default-features = false}
 console_error_panic_hook = {version = "*", optional = true}
-wee_alloc = {version = "^0.4.5", optional = true}
+wee_alloc = {version = "^0.4.5", optional = true, default-features = false}
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.12" # NOTE: keep in sync with wasm-bindgen version
-assert_approx_eq = "*"
+assert_approx_eq = "1.1"
 criterion = "0.3"
-rand = "0.7"
+rand = "0.8"
 
 [[bench]]
 name = "bench_boids"
