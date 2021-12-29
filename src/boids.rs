@@ -202,8 +202,7 @@ impl BoidFlock {
                 );
                 if linex + liney > 0.01
                     && self.velocities[2 * idx] + self.velocities[2 * idx + 1] > 0.01
-                {
-                    if angle_between(
+                    && angle_between(
                         self.velocities[2 * idx],
                         self.velocities[2 * idx + 1],
                         linex,
@@ -211,10 +210,9 @@ impl BoidFlock {
                     )
                     .abs()
                         > FIELD_OF_VIEW_LIMIT
-                    {
-                        // Neighbour is behind the boid, out of its field of vision.
-                        continue;
-                    }
+                {
+                    // Neighbour is behind the boid, out of its field of vision.
+                    continue;
                 }
                 neighbours.push(i)
             }
@@ -224,7 +222,7 @@ impl BoidFlock {
     }
 
     /// Steer towards the average heading of the neighbours.
-    fn align(&self, _idx: usize, neighbours: &Vec<usize>) -> (f32, f32) {
+    fn align(&self, _idx: usize, neighbours: &[usize]) -> (f32, f32) {
         let mut steer = neighbours
             .iter()
             .fold((0f32, 0f32), |steer: (f32, f32), &oidx| {
@@ -247,7 +245,7 @@ impl BoidFlock {
     }
 
     /// Steer towards the centre of the neighbourhood.
-    fn cohede(&self, idx: usize, neighbours: &Vec<usize>) -> (f32, f32) {
+    fn cohede(&self, idx: usize, neighbours: &[usize]) -> (f32, f32) {
         let mut steer = neighbours
             .iter()
             .fold((0f32, 0f32), |steer: (f32, f32), &oidx| {
@@ -268,7 +266,7 @@ impl BoidFlock {
     }
 
     /// Steer away from enchroaching neighbour boids, depending on how close they are.
-    fn separate(&self, idx: usize, neighbours: &Vec<usize>) -> (f32, f32) {
+    fn separate(&self, idx: usize, neighbours: &[usize]) -> (f32, f32) {
         let x = self.positions[2 * idx];
         let y = self.positions[2 * idx + 1];
         neighbours
