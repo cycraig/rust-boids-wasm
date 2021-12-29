@@ -7,7 +7,7 @@ extern crate alloc;
 mod boids;
 mod linalg;
 
-pub use boids::*;
+pub use crate::boids::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
