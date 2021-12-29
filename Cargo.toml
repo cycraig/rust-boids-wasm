@@ -2,7 +2,7 @@
 name = "boids"
 version = "0.1.0"
 authors = ["Craig Bester <me@craigbester.ml>"]
-edition = "2018"
+edition = "2021"
 publish = false
 
 [features]
