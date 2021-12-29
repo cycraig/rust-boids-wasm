@@ -10,7 +10,7 @@ const main = async () => {
     const memory = wasm.memory;
 
     const ctx = canvas.getContext('2d', { antialias: false });
-    const flock = new BoidFlock(50);
+    const flock = new BoidFlock(25);
     const count = flock.count();
 
     const positions = new Float32Array(memory.buffer, flock.positions(), 2 * count);
@@ -60,7 +60,7 @@ const main = async () => {
         fadeInFrame += 1;
       }
 
-      for (let i = 0; i < count; i += 2) {
+      for (let i = 0; i < 2 * count; i += 2) {
         const halfWidth = 2;
         const height = 8;
 
