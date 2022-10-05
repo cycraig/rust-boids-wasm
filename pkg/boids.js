@@ -110,6 +110,8 @@ function getInt32Memory0() {
     }
     return cachedInt32Memory0;
 }
+
+const BoidFlockFinalization = new FinalizationRegistry(ptr => wasm.__wbg_boidflock_free(ptr));
 /**
 */
 export class BoidFlock {
@@ -117,14 +119,14 @@ export class BoidFlock {
     static __wrap(ptr) {
         const obj = Object.create(BoidFlock.prototype);
         obj.ptr = ptr;
-
+        BoidFlockFinalization.register(obj, obj.ptr, obj);
         return obj;
     }
 
     __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
-
+        BoidFlockFinalization.unregister(this);
         return ptr;
     }
 
