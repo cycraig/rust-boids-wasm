@@ -14,7 +14,8 @@ crate-type = ["cdylib", "rlib"]
 # crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = {version = "0.2.73", default-features = false}
+wasm-bindgen = {version = "0.2.83", default-features = false}
+js-sys = {version = "0.3.60", default-features = false}
 console_error_panic_hook = {version = "*", optional = true}
 
 [dev-dependencies]

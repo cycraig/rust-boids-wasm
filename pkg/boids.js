@@ -161,32 +161,18 @@ export class BoidFlock {
         return ret >>> 0;
     }
     /**
-    * @returns {number}
+    * @returns {Float32Array}
     */
     positions() {
         const ret = wasm.boidflock_positions(this.ptr);
-        return ret;
+        return takeObject(ret);
     }
     /**
-    * @returns {number}
+    * @returns {Float32Array}
     */
     velocities() {
         const ret = wasm.boidflock_velocities(this.ptr);
-        return ret;
-    }
-    /**
-    * @returns {number}
-    */
-    positions_mut() {
-        const ret = wasm.boidflock_positions_mut(this.ptr);
-        return ret;
-    }
-    /**
-    * @returns {number}
-    */
-    velocities_mut() {
-        const ret = wasm.boidflock_velocities_mut(this.ptr);
-        return ret;
+        return takeObject(ret);
     }
     /**
     */
@@ -274,8 +260,20 @@ function getImports() {
     imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
         takeObject(arg0);
     };
+    imports.wbg.__wbg_buffer_3f3d764d4747d564 = function(arg0) {
+        const ret = getObject(arg0).buffer;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_newwithbyteoffsetandlength_be22e5fcf4f69ab4 = function(arg0, arg1, arg2) {
+        const ret = new Float32Array(getObject(arg0), arg1 >>> 0, arg2 >>> 0);
+        return addHeapObject(ret);
+    };
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
+    };
+    imports.wbg.__wbindgen_memory = function() {
+        const ret = wasm.memory;
+        return addHeapObject(ret);
     };
 
     return imports;
