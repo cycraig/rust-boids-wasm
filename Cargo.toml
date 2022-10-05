@@ -1,12 +1,12 @@
 [package]
 name = "boids"
 version = "0.1.0"
-authors = ["Craig Bester <me@craigbester.ml>"]
+authors = ["Craig Bester <me@craigbester.com>"]
 edition = "2021"
 publish = false
 
 [features]
-default = ["wee_alloc", "console_error_panic_hook"]
+default = ["console_error_panic_hook"]
 
 [lib]
 # rlib is required for criterion.rs benchmarking but disables lto, build release versions with cdylib only
@@ -16,7 +16,6 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 wasm-bindgen = {version = "0.2.73", default-features = false}
 console_error_panic_hook = {version = "*", optional = true}
-wee_alloc = {version = "^0.4.5", optional = true, default-features = false}
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.12" # NOTE: keep in sync with wasm-bindgen version
