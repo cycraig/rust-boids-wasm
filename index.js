@@ -13,8 +13,8 @@ const main = async () => {
     const flock = new BoidFlock(25);
     const count = flock.count();
 
-    const positions = new Float32Array(memory.buffer, flock.positions(), 2 * count);
-    const velocities = new Float32Array(memory.buffer, flock.velocities(), 2 * count);
+    const positions = flock.positions();
+    const velocities = flock.velocities();
     for (let i = 0; i < count * 2; i += 2) {
       positions[i] = Math.random() * canvas.width;
       positions[i + 1] = Math.random() * canvas.height;
@@ -47,8 +47,8 @@ const main = async () => {
       flock.update();
 
       // The memory locations change over time, so we need to refresh them in the loop.
-      const positions = new Float32Array(memory.buffer, flock.positions(), 2 * count);
-      const velocities = new Float32Array(memory.buffer, flock.velocities(), 2 * count);
+      const positions = flock.positions();
+      const velocities = flock.velocities();
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'grey';

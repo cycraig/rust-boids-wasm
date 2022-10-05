@@ -66,20 +66,16 @@ impl BoidFlock {
         self.count
     }
 
-    pub fn positions(&self) -> *const f32 {
-        self.positions.as_ptr()
+    pub fn positions(&self) -> js_sys::Float32Array {
+        // UNSAFETY: views into WebAssembly memory are only valid so long as the backing buffer isn’t resized in JS.
+        // The returned array may be mutated, carefully.
+        unsafe { js_sys::Float32Array::view(&self.positions) }
     }
 
-    pub fn velocities(&self) -> *const f32 {
-        self.velocities.as_ptr()
-    }
-
-    pub fn positions_mut(&mut self) -> *mut f32 {
-        self.positions.as_mut_ptr()
-    }
-
-    pub fn velocities_mut(&mut self) -> *mut f32 {
-        self.velocities.as_mut_ptr()
+    pub fn velocities(&self) -> js_sys::Float32Array {
+        // UNSAFETY: views into WebAssembly memory are only valid so long as the backing buffer isn’t resized in JS.
+        // The returned array may be mutated, carefully.
+        unsafe { js_sys::Float32Array::view(&self.velocities) }
     }
 
     pub fn update(&mut self) {
