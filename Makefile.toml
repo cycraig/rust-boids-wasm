@@ -20,14 +20,14 @@ args = ["build", "--release"]
 
 [tasks.create_wasm]
 description = "Build with wasm-pack"
-install_crate = { crate_name = "wasm-pack", binary = "wasm-pack", test_arg = "-V", min_version = "0.8.0" }
+install_crate = { crate_name = "wasm-pack", binary = "wasm-pack", test_arg = "-V", min_version = "0.10.3" }
 env = { "WASM_BINDGEN_WEAKREF" = "1" }
 command = "wasm-pack"
 args = ["build", "--target", "web", "--out-name", "boids", "--no-typescript", "--dev"]
 
 [tasks.create_wasm_release]
 description = "Build with wasm-pack"
-install_crate = { crate_name = "wasm-pack", binary = "wasm-pack", test_arg = "-V", min_version = "0.8.0" }
+install_crate = { crate_name = "wasm-pack", binary = "wasm-pack", test_arg = "-V", min_version = "0.10.3" }
 env = { "WASM_BINDGEN_WEAKREF" = "1" }
 command = "wasm-pack"
 args = ["build", "--target", "web", "--out-name", "boids", "--no-typescript"]
