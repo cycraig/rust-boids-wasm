@@ -10,8 +10,8 @@ default = ["console_error_panic_hook"]
 
 [lib]
 # rlib is required for criterion.rs benchmarking but disables lto, build release versions with cdylib only
-crate-type = ["cdylib", "rlib"]
-#crate-type = ["cdylib"]
+#crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
 
 [dependencies]
 wasm-bindgen = {version = "0.2.83", default-features = false}
