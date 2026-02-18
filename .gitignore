@@ -14,6 +14,7 @@ Cargo.lock
 
 # Specifically include release package files.
 # Works only after git adding the files once with --force:
-# git add ./pkg/boids.js ./pkg/boids_bg.wasm -f
+# git add ./pkg/boids.js ./pkg/boids.min.js ./pkg/boids_bg.wasm -f
 !pkg/boids.js
+!pkg/boids.min.js
 !pkg/boids_bg.wasm

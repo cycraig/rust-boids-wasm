@@ -1,4 +1,4 @@
-import init, { BoidFlock } from './pkg/boids.js';
+import init, { BoidFlock } from './pkg/boids.min.js';
 
 const canvas = document.querySelector('canvas');
 resize()

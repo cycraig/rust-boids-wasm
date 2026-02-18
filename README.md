@@ -68,3 +68,5 @@ To compile an optimised, stripped-down release version to `./pkg`:
 ```
 cargo make build_release
 ```
+
+Manually minify `boids.js` -> `boids.min.js`.
