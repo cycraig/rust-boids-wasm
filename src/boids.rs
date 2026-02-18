@@ -114,31 +114,31 @@ impl BoidFlock {
     fn flock(&mut self, idx: usize) {
         // TODO: look into SIMD instructions in wasm...
         let neighbours = self.get_neighbours(idx);
-        let alignment = mul_scalar(&self.align(idx, &neighbours), ALIGN_FORCE);
-        let cohesion = mul_scalar(&self.cohede(idx, &neighbours), COHESION_FORCE);
-        let separation = mul_scalar(&self.separate(idx, &neighbours), SEPARATION_FORCE);
+        let alignment = mul_scalar(self.align(idx, &neighbours), ALIGN_FORCE);
+        let cohesion = mul_scalar(self.cohede(idx, &neighbours), COHESION_FORCE);
+        let separation = mul_scalar(self.separate(idx, &neighbours), SEPARATION_FORCE);
         let attraction = if let Some((a_x, a_y)) = self.get_attractor() {
-            mul_scalar(&self.attract(idx, a_x, a_y), ATTRACTION_FORCE)
+            mul_scalar(self.attract(idx, a_x, a_y), ATTRACTION_FORCE)
         } else {
             (0., 0.)
         };
         let repulsion = if let Some((r_x, r_y)) = self.get_repulsor() {
-            mul_scalar(&self.repel(idx, r_x, r_y), REPULSION_FORCE)
+            mul_scalar(self.repel(idx, r_x, r_y), REPULSION_FORCE)
         } else {
             (0., 0.)
         };
         let avoidance = mul_scalar(
-            &self.avoid_walls(idx, self.width, self.height),
+            self.avoid_walls(idx, self.width, self.height),
             AVOIDANCE_FORCE,
         );
 
         let mut acceleration = (0f32, 0f32);
-        add2_mut(&mut acceleration, &alignment);
-        add2_mut(&mut acceleration, &cohesion);
-        add2_mut(&mut acceleration, &separation);
-        add2_mut(&mut acceleration, &attraction);
-        add2_mut(&mut acceleration, &avoidance);
-        add2_mut(&mut acceleration, &repulsion);
+        add2_mut(&mut acceleration, alignment);
+        add2_mut(&mut acceleration, cohesion);
+        add2_mut(&mut acceleration, separation);
+        add2_mut(&mut acceleration, attraction);
+        add2_mut(&mut acceleration, avoidance);
+        add2_mut(&mut acceleration, repulsion);
 
         self.accelerations[2 * idx] = acceleration.0;
         self.accelerations[2 * idx + 1] = acceleration.1;
@@ -192,17 +192,17 @@ impl BoidFlock {
                 // Potential neighbour.
                 // Project a line from this boid to the potential neighbour to calculate the angle
                 // between it and the velocity vector of this boid, to see if it's in the field of vision.
-                let (linex, liney) = (
+                let (line_x, line_y) = (
                     self.positions[2 * idx] - self.positions[2 * i],
                     self.positions[2 * idx + 1] - self.positions[2 * i + 1],
                 );
-                if linex + liney > 0.01
+                if line_x + line_y > 0.01
                     && self.velocities[2 * idx] + self.velocities[2 * idx + 1] > 0.01
                     && angle_between(
-                        self.velocities[2 * idx],
-                        self.velocities[2 * idx + 1],
-                        linex,
-                        liney,
+                    self.velocities[2 * idx],
+                    self.velocities[2 * idx + 1],
+                    line_x,
+                    line_y,
                     )
                     .abs()
                         > FIELD_OF_VIEW_LIMIT
@@ -210,7 +210,7 @@ impl BoidFlock {
                     // Neighbour is behind the boid, out of its field of vision.
                     continue;
                 }
-                neighbours.push(i)
+                neighbours.push(i);
             }
         }
 
@@ -282,10 +282,10 @@ impl BoidFlock {
     }
 
     /// Steer towards a target location.
-    fn attract(&self, idx: usize, targetx: f32, targety: f32) -> (f32, f32) {
+    fn attract(&self, idx: usize, target_x: f32, target_y: f32) -> (f32, f32) {
         let x = self.positions[2 * idx];
         let y = self.positions[2 * idx + 1];
-        self.steer_towards(x, y, targetx, targety)
+        self.steer_towards(x, y, target_x, target_y)
     }
 
     fn steer_away(&self, x: f32, y: f32, ox: f32, oy: f32) -> (f32, f32) {
@@ -319,10 +319,10 @@ impl BoidFlock {
         let mut steer = (0f32, 0f32);
 
         // Avoid walls.
-        add2_mut(&mut steer, &self.steer_away(x, y, 0., y));
-        add2_mut(&mut steer, &self.steer_away(x, y, width as f32, y));
-        add2_mut(&mut steer, &self.steer_away(x, y, x, 0.));
-        add2_mut(&mut steer, &self.steer_away(x, y, x, height as f32));
+        add2_mut(&mut steer, self.steer_away(x, y, 0., y));
+        add2_mut(&mut steer, self.steer_away(x, y, width as f32, y));
+        add2_mut(&mut steer, self.steer_away(x, y, x, 0.));
+        add2_mut(&mut steer, self.steer_away(x, y, x, height as f32));
 
         // Avoid corners.
         // steer = add2(steer, self.steer_away(x, y, 0., 0.));

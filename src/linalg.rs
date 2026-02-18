@@ -6,12 +6,12 @@ pub fn add(ax: f32, ay: f32, bx: f32, by: f32) -> (f32, f32) {
     (ax + bx, ay + by)
 }
 
-pub fn add2_mut((ax, ay): &mut (f32, f32), (bx, by): &(f32, f32)) {
+pub fn add2_mut((ax, ay): &mut (f32, f32), (bx, by): (f32, f32)) {
     *ax += bx;
     *ay += by;
 }
 
-pub fn mul_scalar((x, y): &(f32, f32), scalar: f32) -> (f32, f32) {
+pub fn mul_scalar((x, y): (f32, f32), scalar: f32) -> (f32, f32) {
     (scalar * x, scalar * y)
 }
 
@@ -80,7 +80,7 @@ mod tests {
     #[test]
     fn test_add2() {
         let add2_fn = |mut a: (f32, f32), b: (f32, f32)| -> (f32, f32) {
-            add2_mut(&mut a, &b);
+            add2_mut(&mut a, b);
             a
         };
         assert_eq!(add2_fn((0., 0.), (0., 0.)), (0., 0.));
@@ -92,22 +92,22 @@ mod tests {
 
     #[test]
     fn test_mul_scalar() {
-        assert_eq!(mul_scalar(&(0., 0.), 3.), (0., 0.));
-        assert_eq!(mul_scalar(&(1., 2.), 0.), (0., 0.));
-        assert_eq!(mul_scalar(&(1., 2.), 1.), (1., 2.));
-        assert_eq!(mul_scalar(&(1., 2.), 5.), (5., 10.));
-        assert_eq!(mul_scalar(&(1., 2.), -5.), (-5., -10.));
+        assert_eq!(mul_scalar((0., 0.), 3.), (0., 0.));
+        assert_eq!(mul_scalar((1., 2.), 0.), (0., 0.));
+        assert_eq!(mul_scalar((1., 2.), 1.), (1., 2.));
+        assert_eq!(mul_scalar((1., 2.), 5.), (5., 10.));
+        assert_eq!(mul_scalar((1., 2.), -5.), (-5., -10.));
     }
 
     #[test]
     fn test_norm() {
         assert_eqf32!(norm(0., 0.), 0.);
         assert_eqf32!(norm(0., 1.), 1.);
-        assert_eqf32!(norm(1., 1.), (2. as f32).sqrt());
-        assert_eqf32!(norm(1., 2.), (5. as f32).sqrt());
+        assert_eqf32!(norm(1., 1.), (2_f32).sqrt());
+        assert_eqf32!(norm(1., 2.), (5_f32).sqrt());
         assert_eqf32!(norm(3., 4.), 5.);
-        assert_eqf32!(norm(-1., 1.), (2. as f32).sqrt());
-        assert_eqf32!(norm(-1., -2.), (5. as f32).sqrt());
+        assert_eqf32!(norm(-1., 1.), (2_f32).sqrt());
+        assert_eqf32!(norm(-1., -2.), (5_f32).sqrt());
         assert_eqf32!(norm(-3., -4.), 5.);
     }
 
@@ -117,20 +117,20 @@ mod tests {
         assert_eq!(normalise(0., 1.), (0., 1.));
         assert_eq!(
             normalise(1., 1.),
-            (1. / (2. as f32).sqrt(), 1. / (2. as f32).sqrt())
+            (1. / (2_f32).sqrt(), 1. / (2_f32).sqrt())
         );
         assert_eq!(
             normalise(1., 2.),
-            (1. / (5. as f32).sqrt(), (2. / (5. as f32).sqrt()))
+            (1. / (5_f32).sqrt(), (2. / (5_f32).sqrt()))
         );
         assert_eq!(normalise(3., 4.), (3. / 5., 4. / 5.));
         assert_eq!(
             normalise(-1., 1.),
-            (-1. / (2. as f32).sqrt(), 1. / (2. as f32).sqrt())
+            (-1. / (2_f32).sqrt(), 1. / (2_f32).sqrt())
         );
         assert_eq!(
             normalise(-1., -2.),
-            (-1. / (5. as f32).sqrt(), (-2. / (5. as f32).sqrt()))
+            (-1. / (5_f32).sqrt(), (-2. / (5_f32).sqrt()))
         );
         assert_eq!(normalise(-3., -4.), (-3. / 5., -4. / 5.));
     }
@@ -154,10 +154,10 @@ mod tests {
         assert_eqf32!(euclid_dist(1., 1., 1., 1.), 0.);
         assert_eqf32!(euclid_dist(-1., 1., -1., 1.), 0.);
         assert_eqf32!(euclid_dist(1234., 5678., 1234., 5678.), 0.);
-        assert_eqf32!(euclid_dist(0., 1., 1., 0.), (2. as f32).sqrt());
-        assert_eqf32!(euclid_dist(1., 2., 3., 4.), (8. as f32).sqrt());
-        assert_eqf32!(euclid_dist(3., 4., 1., 2.), (8. as f32).sqrt());
-        assert_eqf32!(euclid_dist(-1., 1., 1., -1.), (8. as f32).sqrt());
+        assert_eqf32!(euclid_dist(0., 1., 1., 0.), (2_f32).sqrt());
+        assert_eqf32!(euclid_dist(1., 2., 3., 4.), (8_f32).sqrt());
+        assert_eqf32!(euclid_dist(3., 4., 1., 2.), (8_f32).sqrt());
+        assert_eqf32!(euclid_dist(-1., 1., 1., -1.), (8_f32).sqrt());
     }
 
     #[test]
@@ -192,18 +192,18 @@ mod tests {
         assert_eqf32!(_norm_tuple(limit(-2., 0., 2.)), 2.);
         assert_eqf32!(_norm_tuple(limit(-3., 0., 2.)), 2.);
         assert_eqf32!(_norm_tuple(limit(1., 1., 1.)), 1.);
-        assert_eqf32!(_norm_tuple(limit(1., 1., 2.)), (2. as f32).sqrt());
+        assert_eqf32!(_norm_tuple(limit(1., 1., 2.)), (2_f32).sqrt());
         assert_eqf32!(_norm_tuple(limit(-1., -1., 1.)), 1.);
-        assert_eqf32!(_norm_tuple(limit(-1., -1., 2.)), (2. as f32).sqrt());
+        assert_eqf32!(_norm_tuple(limit(-1., -1., 2.)), (2_f32).sqrt());
         assert_eqf32!(_norm_tuple(limit(123., 456., 42.)), 42.);
         assert_eqf32!(
             _norm_tuple(limit(123., 456., 500.)),
-            (123. * 123. + 456. * 456. as f32).sqrt()
+            (123. * 123. + 456. * 456_f32).sqrt()
         );
         assert_eqf32!(_norm_tuple(limit(-123., -456., 42.)), 42.);
         assert_eqf32!(
             _norm_tuple(limit(-123., -456., 500.)),
-            (123. * 123. + 456. * 456. as f32).sqrt()
+            (123. * 123. + 456. * 456_f32).sqrt()
         );
     }
 }
